@@ -412,7 +412,7 @@ def run(paths: List[str],
         for d_path in tmp_document.get_files():
             papis.utils.open_file(d_path)
 
-    if not papis.tui.utils.confirm('Really add?'):
+    if confirm and not papis.tui.utils.confirm('Really add?'):
         return
 
     logger.info(
