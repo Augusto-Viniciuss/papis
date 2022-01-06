@@ -66,11 +66,16 @@ def _update_with_database(document: papis.document.Document) -> None:
 
 def run(document: papis.document.Document,
         data: Dict[str, Any] = dict(),
-        git: bool = False) -> None:
-    # Keep the ref the same, otherwise issues can be caused when
-    # writing LaTeX documents and all the ref's change
-    data['ref'] = document['ref']
+        git: bool = False,
+        force: bool = False,) -> None:
+
+    if not force:
+        # Keep the ref the same, otherwise issues can be caused when
+        # writing LaTeX documents and all the ref's change
+        data['ref'] = document['ref']
+
     document.update(data)
+
     _update_with_database(document)
     folder = document.get_main_folder()
     info = document.get_info_file()
@@ -107,8 +112,13 @@ def run(document: papis.document.Document,
                    "The value can be a papis format.",
               multiple=True,
               type=(str, str),)
+@click.option("--force",
+              help="Force all updates",
+              default=False,
+              is_flag=True,)
 def cli(query: str,
         git: bool,
+        force: bool,
         doc_folder: str,
         from_importer: List[Tuple[str, str]],
         auto: bool,
@@ -143,9 +153,7 @@ def cli(query: str,
 
         ctx.data.update(document)
         if set_tuples:
-            ctx.data.update(
-                {key: papis.format.format(value, document)
-                    for key, value in set_tuples})
+            ctx.data.update({key: papis.format.format(value, document) for key, value in set_tuples})
 
         matching_importers = []
         if not from_importer and auto:
@@ -195,4 +203,4 @@ def cli(query: str,
                         if papis.tui.utils.confirm("Use this file?"):
                             ctx.files.append(f)
 
-        run(document, data=ctx.data, git=git)
+        run(document, data=ctx.data, git=git, force=force)
