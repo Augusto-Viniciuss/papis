@@ -18,10 +18,11 @@ def get_default_settings() -> PapisConfigType:
 
         'move_down_key': 'down',
         'move_up_key': 'up',
-        'move_down_while_info_window_active_key': 'c-n',
-        'move_up_while_info_window_active_key': 'c-p',
+        'move_down_while_info_window_active_key': 'c-j',
+        'move_up_while_info_window_active_key': 'c-k',
         'focus_command_line_key': 'tab',
         'edit_document_key': 'c-e',
+        'edit_notes_key': 'c-n',
         'open_document_key': 'c-o',
         'show_help_key': 'f1',
         'show_info_key': 's-tab',

@@ -26,21 +26,23 @@ from typing import Optional
 
 def run(document: papis.document.Document,
         wait: bool = True,
-        git: bool = False) -> None:
+        git: bool = False,
+        notes: bool = False) -> None:
     database = papis.database.get()
-    info_file_path = document.get_info_file()
-    if not info_file_path:
+
+    file_path = document.get_notes_file() if notes else document.get_info_file()
+    if not file_path:
         raise Exception(papis.strings.no_folder_attached_to_document)
-    papis.utils.general_open(info_file_path, "editor", wait=wait)
+
+    papis.utils.general_open(file_path, "editor", wait=wait)
     document.load()
     database.update(document)
     if git:
         papis.git.add_and_commit_resource(
             str(document.get_main_folder()),
-            info_file_path,
+            file_path,
             "Update information for '{0}'".format(
                 papis.document.describe(document)))
-
 
 @click.command("edit")
 @click.help_option('-h', '--help')

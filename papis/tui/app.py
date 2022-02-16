@@ -67,6 +67,10 @@ def get_keys_info() -> Dict[str, KeyInfo]:
                 'key': config.getstring('edit_document_key', section='tui'),
                 'help': 'Edit currently selected document',
             },
+            "edit_notes_key": {
+                'key': config.getstring('edit_notes_key', section='tui'),
+                'help': 'Edit notes for currently selected document',
+            },
             "open_document_key": {
                 'key': config.getstring('open_document_key', section='tui'),
                 'help': 'Open currently selected document',
@@ -210,6 +214,15 @@ def get_commands(app: Application) -> Tuple[List[Command], KeyBindings]:
             run(doc)
         cmd.app.renderer.clear()
 
+    @kb.add(keys_info["edit_notes_key"]["key"],  # type: ignore
+            filter=has_focus(app.options_list.search_buffer))
+    def edit_notes(cmd: Command) -> None:
+        from papis.commands.edit import run
+        docs = cmd.app.get_selection()
+        for doc in docs:
+            run(doc, notes=True)
+        cmd.app.renderer.clear()
+
     @kb.add(keys_info["show_help_key"]["key"],  # type: ignore
             filter=~has_focus(app.help_window))
     def help(event: Event) -> None:
@@ -240,6 +253,7 @@ def get_commands(app: Application) -> Tuple[List[Command], KeyBindings]:
     return ([
         Command("open", run=open, aliases=["op"]),
         Command("edit", run=edit, aliases=["e"]),
+        Command("edit", run=edit_notes, aliases=["n"]),
         Command("select", run=select, aliases=["e"]),
         Command("exit", run=exit, aliases=["quit", "q"]),
         Command("info", run=info, aliases=["i"]),
