@@ -65,6 +65,7 @@ general_settings = {
     "user-agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3)',
     "scripts-short-help-regex": ".*papis-short-help: *(.*)",
     "info-name": "info.yaml",
+    "notes-name": "notes.md",
     "doc-url-key-name": "doc_url",
 
     "open-mark": False,

@@ -112,6 +112,7 @@ class Document(Dict[str, Any]):
 
     subfolder = ""  # type: str
     _info_file_path = ""  # type: str
+    _notes_file_path = "" # type: str
 
     def __init__(self, folder: Optional[str] = None,
                  data: Optional[Dict[str, Any]] = None):
@@ -151,6 +152,9 @@ class Document(Dict[str, Any]):
         self._info_file_path = os.path.join(
             folder,
             papis.config.getstring('info-name'))
+        self._notes_file_path = os.path.join(
+            folder,
+            papis.config.getstring('notes-name'))
         self.subfolder = (self._folder
                               .replace(os.path.expanduser("~"), "")
                               .replace("/", " "))
@@ -187,6 +191,41 @@ class Document(Dict[str, Any]):
         :rtype: str
         """
         return self._info_file_path
+
+    def get_notes_file(self) -> str:
+        """Get full path for the notes file
+        :returns: Full path for the notes file
+        :rtype: str
+        """
+
+        # Create file and put in a header if the file does not exist or is empty
+        if not os.path.exists(self._notes_file_path) or (os.path.isfile(self._notes_file_path) and os.path.getsize(self._notes_file_path) == 0):
+            with open(self._notes_file_path, 'w+') as notes:
+                title  = 'N/A'
+                ref    = 'N/A'
+                year   = 'N/A'
+                author = 'N/A'
+
+                if 'title' in self and isinstance(self['title'], str):
+                    title = self['title']
+                if 'ref' in self and isinstance(self['ref'], str):
+                    ref = self['ref']
+                if 'year' in self and isinstance(self['year'], str):
+                    year = self['year']
+                if 'author' in self and isinstance(self['author'], str):
+                    authors = self['author'].split('and')
+                    author  = authors[0].strip()
+                    if len(authors) > 1:
+                        author = author + ' et al.'
+
+                # Write header
+                notes.write('### {:s}\n'.format(title))
+                notes.write('- ref:    **{:s}**\n'.format(ref))
+                notes.write('- author: **{:s}**\n'.format(author))
+                notes.write('- year:   **{:s}**\n'.format(year))
+                notes.write('\n---')
+
+        return self._notes_file_path
 
     def get_files(self) -> List[str]:
         """Get the files linked to the document, if any.

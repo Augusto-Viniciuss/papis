@@ -37,7 +37,7 @@ def general_open(
     cmd = shlex.split("{0} '{1}'".format(opener, file_name))
     LOGGER.debug("cmd:  %s", cmd)
     if wait:
-        LOGGER.debug("Waiting for process to finsih")
+        LOGGER.debug("Waiting for process to finish")
         subprocess.call(cmd)
     else:
         LOGGER.debug("Not waiting for process to finish")
